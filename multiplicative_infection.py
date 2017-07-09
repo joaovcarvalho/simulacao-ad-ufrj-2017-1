@@ -13,9 +13,9 @@ states = ['S', 'I']
 
 class State:
     def __init__(self, origin, destiny, dt):
-        self.origin = origin
-        self.destiny = destiny
-        self.dt = dt
+        self.origin = origin # where I am
+        self.destiny = destiny # where I'm going to
+        self.dt = dt # amount of time I'm going to spend at 'origin'
 
     def getState(self):
         return states[self.origin]
@@ -32,18 +32,23 @@ class State:
     def clone(self):
         return State(self.origin, self.destiny, self.dt)
 
-# creates 20 individuals at the 'S' state
+# creates 20 individuals at the 'S'(0) state, who can go to the 'I'(1), but initially are staying "forever" at 'S'
+# in this case, the destiny and dt attributes of the initial population do not matter, since they are randomly initialized afterwards
 state_nodes = [State(0,1,inf) for i in range(N)] # 0: 'S', 1: 'I'
 
-def n(_lambda, gamma, number_of_infected):
-    return 1/(_lambda*gamma**number_of_infected)
-
+# exponential distributed random number generator with rate 'rate'
 def inverse_exp(rate):
     return -log(1-random())/rate
 
+# multiplicative model
+def n(_lambda, gamma, number_of_infected):
+    return 1/(_lambda*gamma**number_of_infected)
+
+# exponential distributed random number generator with a multiplicative rate
 def inverse_exp_n(_lambda, gamma, number_of_infected):
     return -log(1-random())/(_lambda*gamma**number_of_infected)
 
+# determines the amount of infected in the population
 def get_number_of_infected(state_nodes):
     count = 0
     for e in state_nodes:
