@@ -32,11 +32,12 @@ class State:
     def clone(self):
         return State(self.origin, self.destiny, self.dt)
 
-# creates 20 individuals at the 'S'(0) state, who can go to the 'I'(1), but initially are staying "forever" at 'S'
-# in this case, the destiny and dt attributes of the initial population do not matter, since they are randomly initialized afterwards
+# creates N individuals at the 'S'(0) state, who can go to the 'I'(1), but initially are staying "forever" at 'S'
+# in this case, the destiny and dt attributes of the initial population do not matter,
+# since they are randomly initialized afterwards
 state_nodes = [State(0,1,inf) for i in range(N)] # 0: 'S', 1: 'I'
 
-# exponential distributed random number generator with rate 'rate'
+# exponentially distributed random number generator with rate 'rate'
 def inverse_exp(rate):
     return -log(1-random())/rate
 
@@ -44,7 +45,7 @@ def inverse_exp(rate):
 def n(_lambda, gamma, number_of_infected):
     return 1/(_lambda*gamma**number_of_infected)
 
-# exponential distributed random number generator with a multiplicative rate
+# exponentially distributed random number generator with a multiplicative rate
 def inverse_exp_n(_lambda, gamma, number_of_infected):
     return -log(1-random())/(_lambda*gamma**number_of_infected)
 
@@ -52,13 +53,13 @@ def inverse_exp_n(_lambda, gamma, number_of_infected):
 def get_number_of_infected(state_nodes):
     count = 0
     for e in state_nodes:
-        if e.origin != 0:
+        if e.origin == 1:
             count += 1
     return count
 
 
-# critical part of the simulation and it's not generic at all. This part has to be completely changed if, for example, a new state node
-# were to be added to the simulation model
+# critical part of the simulation and it's not generic at all. This part has to be completely changed if, for example,
+# a new state node were to be added to the simulation model
 snapshots = []
 for exp in range(EXPERIMENTS):
     for i in range(N):
@@ -93,11 +94,11 @@ t = 0
 
 # Output format
 # (State 1 -> State 2, time t)
-# The individual remains an amount of time t in the State 1 before transitioning to State 2
+# An individual remains an amount of time t in the State 1 before transitioning to State 2
 print('Tests with the first individual of the population')
 for e in snapshots:
     strBuff = ""
-    strBuff += str(e[0]) + " "
+    strBuff += str(e[0])
     if e[0].origin == 0:
         tS0 += e[0].dt
     if e[0].origin == 1:
@@ -105,5 +106,5 @@ for e in snapshots:
     t += e[0].dt
     print(strBuff)
 
-print("S0 {:.2f}% ".format(tS0*100 / t)) # percentage of time the first individual remains susceptible to infection
-print("I0 {:.2f}% ".format(tI0*100 / t)) # percentage of time the first individual is infected
+print("S0 {:.2f}% ".format(tS0*100 / t)) # percentage of time in which the first individual remains susceptible to infection
+print("I0 {:.2f}% ".format(tI0*100 / t)) # percentage of time in which the first individual is infected
