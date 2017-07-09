@@ -1,4 +1,4 @@
-from math import log
+from math import log, inf
 from random import random
 
 MU = 5 # decontamination/healing rate
@@ -33,7 +33,7 @@ class State:
         return State(self.origin, self.destiny, self.dt)
 
 # creates 20 individuals at the 'S' state
-state_nodes = [State(0,1,0) for i in range(N)] # 0: 'S', 1: 'I'
+state_nodes = [State(0,1,inf) for i in range(N)] # 0: 'S', 1: 'I'
 
 def n(_lambda, gamma, number_of_infected):
     return 1/(_lambda*gamma**number_of_infected)
