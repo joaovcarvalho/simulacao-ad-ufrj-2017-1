@@ -1,4 +1,4 @@
-from math import log, inf
+from math import log, inf, sqrt
 from random import random
 from pprint import PrettyPrinter
 import matplotlib.pyplot as plt
@@ -103,46 +103,39 @@ def simulation(N,GAMMA, MU, LAMBDA0, EXPERIMENTS):
             state_nodes = sorted(state_nodes, key=lambda event: event.dt, reverse=False)
             # pp.pprint(state_nodes)
 
-        # workaround to make copies of the objects
-        # state_nodes_clone = []
-        # for e in state_nodes:
-        #     state_nodes_clone += [e.clone()]
-        #
-        # snapshots += [state_nodes_clone]
         areas += [area/current_time]
 
-    # infected = []
-    # healthy  = []
-    # for s in snapshots:
-    #     number_of_infected = get_number_of_infected(s)
-    #     number_of_healthy  = len(s) - number_of_infected
-    #     infected += [number_of_infected/len(s)]
-    #     healthy  += [number_of_healthy/len(s)]
-    #
+    return areas
 
-    # print("S0 {:.2f}% ".format(mean(healthy)*100)) # percentage of time in which the first individual remains susceptible to infection
-    # print("I0 {:.2f}% ".format(mean(areas)/N*100)) # percentage of time in which the first individual is infected
-    # print()
-    return mean(areas)/N
-
-vec_N = range(10,60,2)
+vec_N = range(10,60,4)
 
 v=0.1
 vec_gamma = [v+i*0.5 for i in range(6)]
 for gamma in vec_gamma:
     iN = -1
 
-    pitaggedinfected = (len(vec_N)) * [None]
+    averages = (len(vec_N)) * [None]
+    std_deviation = (len(vec_N)) * [0]
+    conf_interval = []
 
     for N in vec_N:
-        print(gamma)
-        print(N)
-        print()
+        # print(gamma)
+        # print(N)
+        # print()
         iN += 1
-        pitaggedinfected[iN] = simulation(N, gamma, MU, LAMBDA, EXPERIMENTS)
+        X = simulation(N, gamma, MU, LAMBDA, EXPERIMENTS)
+        averages[iN] = mean(X)/N
+        for x in X:
+            std_deviation[iN] += ((x - averages[iN]*N)**2)/(N-1)
+
+        # conf_interval += [( averages[iN] - 1.96*sqrt(std_deviation[iN])/sqrt(N), averages[iN] + 1.96*sqrt(std_deviation[iN])/sqrt(N) )]
+        conf_interval += [1.96*sqrt(std_deviation[iN])/sqrt(N)]
+
+    # pp.pprint(conf_interval)
     ## Plotting values
     # Choose the values to plot
-    plt.plot(vec_N, pitaggedinfected, linewidth=1, label=r'$\gamma =$'+ str(gamma))
+    plt.plot(vec_N, averages, linewidth=1, label=r'$\gamma =$'+ str(gamma))
+    plt.errorbar(vec_N, averages, conf_interval, linestyle='None', marker='^')
 
 ## Plotting options
 # Choose the corret legend, according values plotted
