@@ -6,10 +6,10 @@ experiments = 1000
 
 def g(x,l):
     return -log(1-x)/l
-    
+
 def f(x,l):
     return l*e**(-l*x)
-    
+
 _lambda = 0.2
 
 ns = [random() for i in range(experiments)]

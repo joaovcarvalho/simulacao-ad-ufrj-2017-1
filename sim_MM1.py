@@ -102,6 +102,4 @@ plt.ylabel('waiting time')
 plt.xlabel('served client')
 plt.axhline(y=avg_wait_time, color='r', linestyle='-')
 plt.show()
-        
-        
 
