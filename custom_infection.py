@@ -5,18 +5,19 @@ from random import random
 from pprint import PrettyPrinter
 import matplotlib.pyplot as plt
 from random import randint
+import graph_generator
 
 pp = PrettyPrinter(indent=4)
 
 MU = 1 # decontamination/healing rate I -> S
 LAMBDA = 10 # external infection rate S -> I
+GAMMA = 1
 ALPHA = 1  # S -> V
-BETA = 5  # I -> D
-
+BETA = 0.01  # I -> D
 
 def get_node_destiny(node):
     if node.origin == 0:
-        return __get_random_node_destiny(LAMBDA / (LAMBDA + ALPHA), [1, 2])
+        return __get_random_node_destiny(LAMBDA / (LAMBDA + alpha), [1, 2])
     elif node.origin == 1:
         return __get_random_node_destiny(MU / (MU + BETA), [0, 3])
     elif node.origin == 2:
@@ -24,15 +25,15 @@ def get_node_destiny(node):
     elif node.origin == 3:
         return 3
 
-def get_time_until_destinty(node, gamma, num_infected):
+def get_time_until_destinty(node, alpha, num_infected):
     if node.origin == 2 or node.origin == 3:
         return float('inf')
 
     if node.origin == 0:
         if node.destiny == 1:
-            return inverse_exp_n(LAMBDA, gamma, num_infected)
+            return inverse_exp_n(LAMBDA, GAMMA, num_infected)
         if node.destiny == 2:
-            return inverse_exp(ALPHA)
+            return inverse_exp(alpha)
     if node.origin == 1:
         if node.destiny == 0:
             return inverse_exp(MU)
@@ -54,7 +55,8 @@ EXPERIMENTS = 30 # number of snapshots of the system
 states = ['S', 'I', 'V', 'D']
 
 class State:
-    def __init__(self, origin, destiny, dt):
+    def __init__(self, origin, destiny, dt, id_node):
+        self.id_node = id_node
         self.origin = origin # where I am
         self.destiny = destiny # where I'm going to
         self.dt = dt # amount of time I'm going to spend at 'origin'
@@ -90,11 +92,14 @@ def inverse_exp_n(_lambda, gamma, number_of_infected):
     return -log(1-random())/(_lambda*gamma**number_of_infected)
 
 # determines the amount of infected in the population
-def get_number_of_infected(state_nodes):
+def get_number_of_infected(id_node, state_nodes, graph):
     count = 0
-    for e in state_nodes:
-        if e.origin == 1:
-            count += 1
+    list_of_edges = graph[id_node]
+    for edge in list_of_edges:
+        for state in state_nodes:
+            if state.id_node == edge:
+                if state.origin == 1:
+                    count += 1
     return count
 
 def count_nodes_by_state(state_nodes):
@@ -106,7 +111,8 @@ def count_nodes_by_state(state_nodes):
             dict[node.origin] = 1
     return dict
 
-def simulation(N,GAMMA, MU, LAMBDA0, EXPERIMENTS):
+def simulation(N,alpha, MU, LAMBDA0, EXPERIMENTS):
+    graph = graph_generator.get_random_graph(N)
     LAMBDA = LAMBDA0/N
     # critical part of the simulation and it's not generic at all. This part has to be completely changed if, for example,
     # a new state node were to be added to the simulation model
@@ -118,7 +124,7 @@ def simulation(N,GAMMA, MU, LAMBDA0, EXPERIMENTS):
         # creates N individuals at the 'S'(0) state, who can go to the 'I'(1), but initially are staying "forever" at 'S'
         # in this case, the destiny and dt attributes of the initial population do not matter,
         # since they are randomly initialized afterwards
-        state_nodes = [State(0,1,0) for i in range(N)] # 0: 'S', 1: 'I'
+        state_nodes = [State(0,1,0,i) for i in range(N)] # 0: 'S', 1: 'I'
 
         current_time = 0
         # print(state_nodes)
@@ -146,7 +152,7 @@ def simulation(N,GAMMA, MU, LAMBDA0, EXPERIMENTS):
                 state_nodes[i].dt -= node.dt
 
             node.destiny = get_node_destiny(node)
-            node.dt = get_time_until_destinty(node, gamma, get_number_of_infected(state_nodes))
+            node.dt = get_time_until_destinty(node, alpha, get_number_of_infected(node.id_node, state_nodes, graph))
 
             state_nodes = sorted(state_nodes, key=lambda event: event.dt, reverse=False)
 
@@ -154,14 +160,14 @@ def simulation(N,GAMMA, MU, LAMBDA0, EXPERIMENTS):
 
     return areas
 
-vec_N = range(30,90,10)
+vec_N = range(30,60,10)
 
 v=0.1
-vec_gamma = [v+i*0.25 for i in range(10)]
+vec_alpha = [v+i*0.5 for i in range(5)]
 
-num_of_total_iterations = len(vec_N) * len(vec_gamma)
+num_of_total_iterations = len(vec_N) * len(vec_alpha)
 current_iteration = 1
-for gamma in vec_gamma:
+for alpha in vec_alpha:
     iN = 0
 
     averages = (len(vec_N)) * [None]
@@ -175,7 +181,7 @@ for gamma in vec_gamma:
         # print(gamma)
         # print(N)
         # print()
-        X = simulation(N, gamma, MU, LAMBDA, EXPERIMENTS)
+        X = simulation(N, alpha, MU, LAMBDA, EXPERIMENTS)
         # pp.pprint(X)
         averages[iN] = mean(X)/N
         for x in X:
@@ -188,7 +194,7 @@ for gamma in vec_gamma:
     # pp.pprint(averages)
     ## Plotting values
     # Choose the values to plot
-    plt.plot(vec_N, averages, linewidth=1, label=r'$\gamma =$'+ str(gamma))
+    plt.plot(vec_N, averages, linewidth=1, label=r'$\alpha =$'+ str(alpha))
     plt.errorbar(vec_N, averages, conf_interval, linestyle='None', marker='^')
 
 ## Plotting options
