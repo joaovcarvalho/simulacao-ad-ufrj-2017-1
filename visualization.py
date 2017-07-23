@@ -5,6 +5,7 @@ import time as time_lib
 list_of_states = []
 time = 0
 experiment = 0
+iteration = 1
 
 def load_experiment(i):
     global time
@@ -12,7 +13,7 @@ def load_experiment(i):
     list_of_states = []
     time = 0
     print('Next experiment: ' + str(i))
-    with open('experiments/iteration_1/experiment_{0}.csv'.format(i), 'rb') as csvfile:
+    with open('experiments/iteration_{0}/experiment_{1}.csv'.format(iteration,i), 'rb') as csvfile:
         reader = csv.reader(csvfile, delimiter=',', quotechar=' ')
         for row in reader:
             list_of_states += [(row[0], row[1:])]
@@ -49,8 +50,9 @@ def draw():
 
     textSize(20)
     fill(0, 102, 153)
-    text("Iteration: " + str(experiment), 20, 30)
-    text("Time: " + str(time), 20, 60)
+    text("Iteration: " + str(iteration), 20, 30)
+    text("Experiment: " + str(experiment), 20, 60)
+    text("Time: " + str(time), 20, 90)
 
     translate(400, 400)
 
