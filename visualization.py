@@ -12,7 +12,7 @@ def load_experiment(i):
     list_of_states = []
     time = 0
     print('Next experiment: ' + str(i))
-    with open('experiments/iteration_1/experiment_{0}.csv'.format(i), 'rb') as csvfile:
+    with open('experiments/iteration_2/experiment_{0}.csv'.format(i), 'rb') as csvfile:
         reader = csv.reader(csvfile, delimiter=',', quotechar=' ')
         for row in reader:
             list_of_states += [(row[0], row[1:])]

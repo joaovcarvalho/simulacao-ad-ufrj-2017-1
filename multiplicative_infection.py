@@ -45,6 +45,10 @@ def inverse_exp(rate):
 def n(_lambda, gamma, number_of_infected):
     return 1/(_lambda*gamma**number_of_infected)
 
+# exponentially distributed random number generator with a additive rate
+def inverse_exp_add(_lambda, gamma, number_of_infected):
+    return -log(1-random())/(_lambda + number_of_infected*gamma)
+
 # exponentially distributed random number generator with a multiplicative rate
 def inverse_exp_n(_lambda, gamma, number_of_infected):
     return -log(1-random())/(_lambda*gamma**number_of_infected)
@@ -149,9 +153,9 @@ plt.grid()
 
 ## Choose one position
 #plt.legend(loc='upper right')
-#plt.legend(loc='center right')
-plt.legend(loc='lower right')
+plt.legend(loc='center right')
+#plt.legend(loc='lower right')
 
-# plt.show()
+plt.show()
 
-plt.savefig('figuras/test.tikz')
+#plt.savefig('figuras/test.eps')
