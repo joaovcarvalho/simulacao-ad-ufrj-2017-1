@@ -18,17 +18,18 @@ LAMBDA = 10 # external infection rate S -> I
 GAMMA = 1 # internal infection
 ALPHA = 0.01  # S -> V
 BETA = 20  # I -> D
+
 TIME = 500
 EXPERIMENTS = 10
 
-vec_N = range(10,30,4)
+vec_N = range(10,100,4)
 
 v=0.1
-vec_alpha = [v+i*0.5 for i in range(5)]
+vec_variable = [v+i*0.05 for i in range(3)]
 
-num_of_total_iterations = len(vec_N) * len(vec_alpha)
+num_of_total_iterations = len(vec_N) * len(vec_variable)
 current_iteration = 1
-for alpha in vec_alpha:
+for value in vec_variable:
     iN = 0
 
     averages = (len(vec_N)) * [None]
@@ -39,7 +40,16 @@ for alpha in vec_alpha:
         sys.stdout.flush()
         print("Interaction {0} / {1}".format(current_iteration, num_of_total_iterations))
         # print(N,alpha,MU,LAMBDA,BETA,GAMMA, EXPERIMENTS,TIME, current_iteration)
-        X = simulation.simulation(N, alpha, MU, LAMBDA, BETA, GAMMA, EXPERIMENTS, TIME, current_iteration)
+        X = simulation.simulation(
+            number_of_nodes=N,
+            alpha=ALPHA,
+            mu=MU,
+            lambda0=LAMBDA,
+            beta=value,
+            gamma=GAMMA,
+            num_experiments=EXPERIMENTS,
+            stopping_time=TIME, 
+            iteration=current_iteration)
         # pp.pprint(X)
         averages[iN] = mean(X)
         for x in X:
@@ -56,7 +66,7 @@ for alpha in vec_alpha:
     # pp.pprint(averages)
     ## Plotting values
     # Choose the values to plot
-    plt.plot(vec_N, averages, linewidth=1, label=r'$\alpha =$'+ str(alpha))
+    plt.plot(vec_N, averages, linewidth=1, label=r'$\alpha =$'+ str(value))
     # plt.errorbar(vec_N, averages, conf_interval, linestyle='None', marker='^')
 
 ## Plotting options

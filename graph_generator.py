@@ -10,7 +10,7 @@ def get_random_graph(number_of_nodes):
             if i == j:
                 continue
 
-            if randint(0,100) < 100:
+            if randint(0,100) < 90:
                 list_of_edges[i] += [j]
                 list_of_edges[j] += [i]
                 list_of_edges[i] = list(set(list_of_edges[i]))

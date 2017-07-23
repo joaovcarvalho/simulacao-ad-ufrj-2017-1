@@ -11,11 +11,11 @@ import os, errno
 
 def get_node_destiny(node, lambdac, alpha, mu, beta):
     if node.origin == 0:
-        # return __get_random_node_destiny(lambdac / (lambdac + alpha), [1, 2])
-        return 1
+        return __get_random_node_destiny(lambdac / (lambdac + alpha), [1, 2])
+        # return 1
     elif node.origin == 1:
-        # return __get_random_node_destiny(mu / (mu + beta), [0, 3])
-        return 0
+        return __get_random_node_destiny(mu / (mu + beta), [0, 3])
+        # return 0
     elif node.origin == 2:
         return 2
     elif node.origin == 3:
@@ -145,7 +145,7 @@ def simulation(number_of_nodes,alpha, mu, lambda0,beta,gamma, num_experiments, s
                 current_time += node.dt
 
                 nodes_grouped_by_origin = count_nodes_by_state(state_nodes)
-                number_of_interest = nodes_grouped_by_origin.get(1, 0)
+                number_of_interest = nodes_grouped_by_origin.get(3, 0)
 
                 if current_time > 200:
                     area += number_of_interest * passed_time

@@ -11,7 +11,7 @@ def load_experiment(i):
     list_of_states = []
     time = 0
     print('Next experiment: ' + str(i))
-    with open('experiments/iteration_7/experiment_{0}.csv'.format(i), 'rb') as csvfile:
+    with open('experiments/iteration_53/experiment_{0}.csv'.format(i), 'rb') as csvfile:
         reader = csv.reader(csvfile, delimiter=',', quotechar=' ')
         for row in reader:
             list_of_states += [(row[0], row[1:])]
@@ -48,15 +48,15 @@ def draw():
 
     teta = 0
     if 360 / len(states) < 20:
-        teta_step = 20
+        teta_step = 30
     else:
         teta_step = 360 / len(states)
 
-    radious = 100
+    radious = 150
 
-    for node in states:
-        x = radious*math.cos(teta * math.pi / 180)
-        y = radious*math.sin(teta * math.pi / 180)
+    for i,node in enumerate(states):
+        x = (radious)*math.cos(teta * math.pi / 180)
+        y = (radious)*math.sin(teta * math.pi / 180)
 
         if teta > 360:
             radious += 50
