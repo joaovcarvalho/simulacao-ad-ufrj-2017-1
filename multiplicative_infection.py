@@ -45,7 +45,7 @@ def inverse_exp(rate):
 def n(_lambda, gamma, number_of_infected):
     return 1/(_lambda*gamma**number_of_infected)
 
-# exponentially distributed random number generator with a additive rate
+# exponentially distributed random number generator with an additive rate
 def inverse_exp_add(_lambda, gamma, number_of_infected):
     return -log(1-random())/(_lambda + number_of_infected*gamma)
 
