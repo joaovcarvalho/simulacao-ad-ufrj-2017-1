@@ -152,4 +152,6 @@ plt.grid()
 #plt.legend(loc='center right')
 plt.legend(loc='lower right')
 
-plt.show()
+# plt.show()
+
+plt.savefig('figuras/test.tikz')

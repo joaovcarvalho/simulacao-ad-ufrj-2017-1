@@ -9,6 +9,9 @@ import graph_generator
 import csv
 import os, errno
 
+pp = PrettyPrinter(indent=4)
+
+
 def get_node_destiny(node, lambdac, alpha, mu, beta):
     if node.origin == 0:
         return __get_random_node_destiny(lambdac / (lambdac + alpha), [1, 2])
@@ -101,7 +104,7 @@ def count_nodes_by_state(state_nodes):
     dict = {}
     for node in state_nodes:
         if node.origin in dict:
-            dict[node.origin] = dict[node.origin] + 1
+            dict[node.origin] += 1
         else:
             dict[node.origin] = 1
     return dict
@@ -113,11 +116,11 @@ def simulation(number_of_nodes,alpha, mu, lambda0,beta,gamma, num_experiments, s
     # a new state node were to be added to the simulation model
     # snapshots = []
     areas = []
-    if not os.path.exists(f"experiments/iteration_{iteration}"):
-        os.makedirs(f"experiments/iteration_{iteration}")
+    if not os.path.exists("experiments/iteration_" + str(iteration)):
+        os.makedirs("experiments/iteration_" + str(iteration))
 
     for exp in range(num_experiments):
-        with open(f'experiments/iteration_{iteration}/experiment_{exp}.csv', 'w', newline='') as csvfile:
+        with open('experiments/iteration_{0}/experiment_{1}.csv'.format(iteration, exp), 'w', newline='') as csvfile:
             log_writter = csv.writer(csvfile, delimiter=',',
                                     quotechar=' ', quoting=csv.QUOTE_MINIMAL)
 
@@ -137,6 +140,7 @@ def simulation(number_of_nodes,alpha, mu, lambda0,beta,gamma, num_experiments, s
                 if(node.dt == float('inf')):
                     current_time = stopping_time
                     break
+
                 # sets the origin from the second node and so forth. Since there are only two nodes, the origin of the current
                 # node is always going to be the destiny of the previous node
                 node.origin = node.destiny
@@ -147,8 +151,7 @@ def simulation(number_of_nodes,alpha, mu, lambda0,beta,gamma, num_experiments, s
                 nodes_grouped_by_origin = count_nodes_by_state(state_nodes)
                 number_of_interest = nodes_grouped_by_origin.get(3, 0)
 
-                if current_time > 200:
-                    area += number_of_interest * passed_time
+                area += number_of_interest * passed_time
 
                 for i in range(1,number_of_nodes):
                     state_nodes[i].dt -= node.dt
@@ -160,6 +163,6 @@ def simulation(number_of_nodes,alpha, mu, lambda0,beta,gamma, num_experiments, s
                 log_writter.writerow(["%.2f" % passed_time] + sorted(state_nodes, key=lambda event: event.id_node, reverse=False) )
 
 
-            areas += [area/(current_time - 200)]
+            areas += [area/current_time]
 
     return areas

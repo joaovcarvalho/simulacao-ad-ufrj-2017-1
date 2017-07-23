@@ -16,13 +16,13 @@ def mean(_list):
 MU = 1 # decontamination/healing rate I -> S
 LAMBDA = 10 # external infection rate S -> I
 GAMMA = 1 # internal infection
-ALPHA = 0.01  # S -> V
+ALPHA = 0.1  # S -> V
 BETA = 20  # I -> D
 
 TIME = 500
-EXPERIMENTS = 10
+EXPERIMENTS = 30
 
-vec_N = range(10,100,4)
+vec_N = range(20,60,4)
 
 v=0.1
 vec_variable = [v+i*0.05 for i in range(3)]
@@ -48,7 +48,7 @@ for value in vec_variable:
             beta=value,
             gamma=GAMMA,
             num_experiments=EXPERIMENTS,
-            stopping_time=TIME, 
+            stopping_time=TIME,
             iteration=current_iteration)
         # pp.pprint(X)
         averages[iN] = mean(X)
@@ -56,6 +56,7 @@ for value in vec_variable:
             std_deviation[iN] += ((x - averages[iN])**2)/(N-1)
 
         averages[iN] = averages[iN]/N
+        # pp.pprint(averages[iN])
         std_deviation[iN] = std_deviation[iN]/N
 
         # conf_interval += [( averages[iN] - 1.96*sqrt(std_deviation[iN])/sqrt(N), averages[iN] + 1.96*sqrt(std_deviation[iN])/sqrt(N) )]
