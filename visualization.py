@@ -1,5 +1,6 @@
 import csv
 import math
+import time as time_lib
 
 list_of_states = []
 time = 0
@@ -18,6 +19,7 @@ def load_experiment(i):
 
 def setup():
     global experiment
+    frameRate(12)
     load_experiment(experiment)
     size(800, 800)
 
@@ -43,8 +45,14 @@ def draw():
     global experiment
     states = list_of_states[time][1]
 
-    translate(400, 400)
     background(255)
+
+    textSize(20)
+    fill(0, 102, 153)
+    text("Iteration: " + str(experiment), 20, 30)
+    text("Time: " + str(time), 20, 60)
+
+    translate(400, 400)
 
     teta = 0
     if 360 / len(states) < 20:
@@ -67,6 +75,7 @@ def draw():
         draw_node(node,x,y)
 
     if time == len(list_of_states) - 1:
+        time_lib.sleep(2)
         experiment += 1
         load_experiment(experiment)
     else:
