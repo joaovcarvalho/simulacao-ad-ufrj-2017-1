@@ -8,6 +8,7 @@ from random import randint
 import graph_generator
 import csv
 import os, errno
+import pickle
 
 pp = PrettyPrinter(indent=4)
 
@@ -111,13 +112,20 @@ def count_nodes_by_state(state_nodes):
 
 def simulation(number_of_nodes,alpha, mu, lambda0,beta,gamma, num_experiments, stopping_time, iteration):
     graph = graph_generator.get_random_graph(number_of_nodes)
+
+    # pp.pprint(graph)
+
     lambdan = lambda0/number_of_nodes
     # critical part of the simulation and it's not generic at all. This part has to be completely changed if, for example,
     # a new state node were to be added to the simulation model
-    # snapshots = []
     areas = []
     if not os.path.exists("experiments/iteration_" + str(iteration)):
         os.makedirs("experiments/iteration_" + str(iteration))
+
+    # Saves graph to disk so it can be use to visualization
+    with open('experiments/iteration_{0}/graph.pickle'.format(iteration), 'wb') as pickle_file:
+        pickler = pickle.Pickler(pickle_file, 2)
+        pickler.dump(graph_generator.convert_to_matrix(graph))
 
     for exp in range(num_experiments):
         with open('experiments/iteration_{0}/experiment_{1}.csv'.format(iteration, exp), 'w', newline='') as csvfile:
