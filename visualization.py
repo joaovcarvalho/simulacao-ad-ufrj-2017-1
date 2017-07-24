@@ -19,7 +19,6 @@ def load_experiment(i):
     list_of_states = []
     time = 0
     print('Next experiment: ' + str(i))
-
     # Loads graph
     with open('experiments/iteration_{0}/graph.pickle'.format(iteration), 'rb') as pickle_file:
         pickler = pickle.Unpickler(pickle_file)

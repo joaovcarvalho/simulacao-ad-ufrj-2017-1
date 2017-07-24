@@ -90,6 +90,10 @@ def n(_lambda, gamma, number_of_infected):
 def inverse_exp_n(_lambda, gamma, number_of_infected):
     return -log(1-random())/(_lambda*gamma**number_of_infected)
 
+# exponentially distributed random number generator with an additive rate
+def inverse_exp_add(_lambda, gamma, number_of_infected):
+    return -log(1-random())/(_lambda + number_of_infected*gamma)
+
 # determines the amount of infected in the population
 def get_number_of_infected(id_node, state_nodes, graph):
     count = 0

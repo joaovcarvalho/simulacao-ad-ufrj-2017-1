@@ -67,7 +67,7 @@ for value in vec_variable:
     # pp.pprint(averages)
     ## Plotting values
     # Choose the values to plot
-    plt.plot(vec_N, averages, linewidth=1, label=r'$\alpha =$'+ str(value))
+    plt.plot(vec_N, averages, linewidth=1, label=r'$\alpha =$'+ "{0:.2f}".format(value))
     # plt.errorbar(vec_N, averages, conf_interval, linestyle='None', marker='^')
 
 ## Plotting options
@@ -81,8 +81,8 @@ plt.ylabel('probability of tagged node is dead')
 plt.grid()
 
 ## Choose one position
-#plt.legend(loc='upper right')
+plt.legend(loc='upper right')
 #plt.legend(loc='center right')
-plt.legend(loc='lower right')
+#plt.legend(loc='lower right')
 
 plt.show()
