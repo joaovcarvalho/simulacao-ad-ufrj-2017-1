@@ -105,24 +105,12 @@ def get_number_of_infected(id_node, state_nodes, graph):
                     count += 1
     return count
 
-def count_nodes_by_state(state_nodes):
-    dict = {}
-    for node in state_nodes:
-        if node.origin in dict:
-            dict[node.origin] += 1
-        else:
-            dict[node.origin] = 1
-    return dict
-
 def simulation(number_of_nodes,alpha, mu, lambda0,beta,gamma, num_experiments, stopping_time, iteration):
     graph = graph_generator.get_random_graph(number_of_nodes)
-
-    # pp.pprint(graph)
 
     lambdan = lambda0/number_of_nodes
     # critical part of the simulation and it's not generic at all. This part has to be completely changed if, for example,
     # a new state node were to be added to the simulation model
-    areas = []
     if not os.path.exists("experiments/iteration_" + str(iteration)):
         os.makedirs("experiments/iteration_" + str(iteration))
 
@@ -136,7 +124,6 @@ def simulation(number_of_nodes,alpha, mu, lambda0,beta,gamma, num_experiments, s
             log_writter = csv.writer(csvfile, delimiter=',',
                                     quotechar=' ', quoting=csv.QUOTE_MINIMAL)
 
-            area = 0.0
             number_of_infected = 0
             # creates N individuals at the 'S'(0) state, who can go to the 'I'(1), but initially are staying "forever" at 'S'
             # in this case, the destiny and dt attributes of the initial population do not matter,
@@ -160,11 +147,6 @@ def simulation(number_of_nodes,alpha, mu, lambda0,beta,gamma, num_experiments, s
                 passed_time = node.dt
                 current_time += node.dt
 
-                nodes_grouped_by_origin = count_nodes_by_state(state_nodes)
-                number_of_interest = nodes_grouped_by_origin.get(3, 0)
-
-                area += number_of_interest * passed_time
-
                 for i in range(1,number_of_nodes):
                     state_nodes[i].dt -= node.dt
 
@@ -173,8 +155,3 @@ def simulation(number_of_nodes,alpha, mu, lambda0,beta,gamma, num_experiments, s
 
                 state_nodes = sorted(state_nodes, key=lambda event: event.dt, reverse=False)
                 log_writter.writerow(["%.2f" % passed_time] + sorted(state_nodes, key=lambda event: event.id_node, reverse=False) )
-
-
-            areas += [area/current_time]
-
-    return areas

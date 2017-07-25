@@ -1,4 +1,7 @@
-Baby Steps:
-- Separar código da simulação em arquivo diferente
-- Gerar log da simulacao e remover estatistica do log ao inves do retorno da simulation
-- Gerador de estatistica generico pra qualquer estado
+Gerador de Estatisticas :
+
+- Descobrir quantas iteracoes e experimentos possui
+- Carregar grafo e experimentos
+- Pegar estatisticas de cada experimento
+- Calcular media dos experimentos
+- Calcular intervalo de confiança para cada métrica

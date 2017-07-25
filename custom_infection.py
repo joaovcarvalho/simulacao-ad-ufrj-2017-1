@@ -7,17 +7,19 @@ import matplotlib.pyplot as plt
 from random import randint
 import graph_generator
 import simulation
+import statistics_aggregator
 
 pp = PrettyPrinter(indent=4)
 
 def mean(_list):
     return sum(_list)/len(_list)
 
+# in days
 MU = 1 # decontamination/healing rate I -> S
 LAMBDA = 10 # external infection rate S -> I
 GAMMA = 1 # internal infection
 ALPHA = 0.1  # S -> V
-BETA = 20  # I -> D
+BETA = 8.5
 
 TIME = 500
 EXPERIMENTS = 30
@@ -40,24 +42,22 @@ for value in vec_variable:
         sys.stdout.flush()
         print("Interaction {0} / {1}".format(current_iteration, num_of_total_iterations))
         # print(N,alpha,MU,LAMBDA,BETA,GAMMA, EXPERIMENTS,TIME, current_iteration)
-        X = simulation.simulation(
+        simulation.simulation(
             number_of_nodes=N,
-            alpha=ALPHA,
+            alpha=value,
             mu=MU,
             lambda0=LAMBDA,
-            beta=value,
+            beta=BETA,
             gamma=GAMMA,
             num_experiments=EXPERIMENTS,
             stopping_time=TIME,
             iteration=current_iteration)
         # pp.pprint(X)
-        averages[iN] = mean(X)
-        for x in X:
-            std_deviation[iN] += ((x - averages[iN])**2)/(N-1)
 
-        averages[iN] = averages[iN]/N
-        # pp.pprint(averages[iN])
-        std_deviation[iN] = std_deviation[iN]/N
+        X = statistics_aggregator.get_average_num_of_state(current_iteration, 'D', EXPERIMENTS)
+        averages[iN] = mean(X)/N
+        for x in X:
+            std_deviation[iN] += (( (x/N) - averages[iN])**2)/(N-1)
 
         # conf_interval += [( averages[iN] - 1.96*sqrt(std_deviation[iN])/sqrt(N), averages[iN] + 1.96*sqrt(std_deviation[iN])/sqrt(N) )]
         conf_interval += [1.96*sqrt(std_deviation[iN])/sqrt(N)]
@@ -68,7 +68,7 @@ for value in vec_variable:
     ## Plotting values
     # Choose the values to plot
     plt.plot(vec_N, averages, linewidth=1, label=r'$\alpha =$'+ "{0:.2f}".format(value))
-    # plt.errorbar(vec_N, averages, conf_interval, linestyle='None', marker='^')
+    plt.errorbar(vec_N, averages, conf_interval, linestyle='None', marker='^')
 
 ## Plotting options
 # Choose the corret legend, according values plotted
