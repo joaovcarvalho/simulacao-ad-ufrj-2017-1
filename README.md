@@ -13,4 +13,6 @@ $ python3 sim_MM1.py
 ## Running main programs
 ```
 $ python3 multiplicative_infection.py
+$ python3 custom_infection.py
+$ ./visualize.sh
 ```
